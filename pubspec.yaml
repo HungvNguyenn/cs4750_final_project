@@ -1,0 +1,13 @@
+name: puzzle_game
+description: an app with multiple different puzzle games
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.0
+  flutter: ^3.13.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flame: ^1.32.0
