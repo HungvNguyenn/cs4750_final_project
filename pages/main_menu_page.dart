@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:puzzle_game/pages/sudoku_game_page.dart';
+import 'package:puzzle_game/pages/word_search_page.dart';
 
 
 class MainMenuPage extends StatelessWidget {
@@ -15,7 +16,7 @@ class MainMenuPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Puzzle Game Collection'),
+        title: const Text('Puzzle Box'),
         centerTitle: true,
       ),
       body: Center(
@@ -38,6 +39,13 @@ class MainMenuPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const SudokuGamePage()),
+                    );
+                    return;
+                  }
+                  if (title == 'Word Puzzle') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const WordSearchPage()),
                     );
                     return;
                   }
