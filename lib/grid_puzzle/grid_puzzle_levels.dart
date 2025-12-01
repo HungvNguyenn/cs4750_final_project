@@ -27,7 +27,7 @@ class GridPuzzleLevels {
       [null, -10, null],
       [ 3,  null,  4],
     ],
-/*
+
     // Level 4
     [
       [ 8,  null,  8],
@@ -75,7 +75,7 @@ class GridPuzzleLevels {
       [-6, -1, -8],
       [4, -8, 7],
       [-5, -11, -9],
-    ], */
+    ],
   ];
 
   static int get totalLevels => levels.length;
