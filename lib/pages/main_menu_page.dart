@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:puzzle_game/pages/sudoku_game_page.dart';
-import 'package:puzzle_game/pages/word_search_page.dart';
+import 'package:puzzle_game/sudoku/sudoku_game_page.dart';
+import 'package:puzzle_game/word_search/word_search_page.dart';
 import 'package:puzzle_game/grid_puzzle/grid_puzzle_page.dart';
 
 
