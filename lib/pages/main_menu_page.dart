@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:puzzle_game/match3/match3_page.dart';
 import 'package:puzzle_game/sudoku/sudoku_game_page.dart';
 import 'package:puzzle_game/word_search/word_search_page.dart';
 import 'package:puzzle_game/grid_puzzle/grid_puzzle_page.dart';
@@ -13,6 +14,7 @@ class MainMenuPage extends StatelessWidget {
       'Sudoku',
       'Word Search',
       'Grid Puzzle',
+      'Match 3',
     ];
 
     return Scaffold(
@@ -54,6 +56,14 @@ class MainMenuPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const GridPuzzlePage()),
+                    );
+                    return;
+                  }
+
+                  if (title == 'Match 3') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const Match3Page()),
                     );
                     return;
                   }
