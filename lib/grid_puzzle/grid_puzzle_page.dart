@@ -4,6 +4,8 @@ import 'package:puzzle_game/pages/congratulation_page.dart';
 import 'package:puzzle_game/rules_dialog.dart';
 import 'grid_puzzle_board.dart';
 import 'grid_puzzle_controller.dart';
+import '../services/sfx.dart';
+
 
 
 class GridPuzzlePage extends StatefulWidget {
@@ -36,46 +38,60 @@ class _GridPuzzlePageState extends State<GridPuzzlePage> {
   }
 
   void _handleCellTap(int row, int col) {
-  controller.tapCell(row, col);
+    // 🔊 play click sound on every tap
+    Sfx.click();
 
-  if (!controller.isSolved) return;
+    controller.tapCell(row, col);
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (controller.hasNextLevel) {
-      // Normal per-level congratulations
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => CongratulationPage(
-            message: 'You solved Level ${controller.currentLevel}!',
-            onNext: () {
-              // Close congrats page, then go to the next level
-              Navigator.pop(context);
-              setState(() {
-                controller.goToNextLevel();
-              });
-            },
+    if (!controller.isSolved) return;
+
+    // 🔊 play correct sound when the puzzle is solved
+    Sfx.correct();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.hasNextLevel) {
+        // Normal per-level congratulations
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CongratulationPage(
+              message: 'You solved Level ${controller.currentLevel}!',
+              onNext: () {
+                // Close congrats page, then go to the next level
+                Navigator.pop(context);
+                setState(() {
+                  controller.goToNextLevel();
+                });
+              },
+            ),
           ),
-        ),
-      );
-    } else {
-      // Final level beaten – show “all levels done” screen
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => CongratulationPage(
-            message: 'You completed all levels!',
-            onNext: () {
-              // Close congrats page, then go back to the main menu
-              Navigator.pop(context); // pop CongratulationPage
-              Navigator.pop(context); // pop GridPuzzlePage -> back to MainMenuPage
-            },
+        );
+      } else {
+        // Final level beaten – show “all levels done” screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CongratulationPage(
+              message: 'You completed all levels!',
+              onNext: () {
+                // Close congrats page, then go back to the main menu
+                Navigator.pop(context); // pop CongratulationPage
+                Navigator.pop(context); // pop GridPuzzlePage -> back to MainMenuPage
+              },
+            ),
           ),
-        ),
-      );
-    }
-  });
-}
+        );
+      }
+    });
+  }
+
+  void _handleReset() {
+    // play reset sound
+    Sfx.reset();
+
+    // existing reset logic
+    controller.resetLevel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,14 +154,13 @@ class _GridPuzzlePageState extends State<GridPuzzlePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: controller.resetLevel,
+                  onPressed: _handleReset,
                   child: const Text('Reset Level'),
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton(
-                  onPressed: controller.hasNextLevel
-                      ? controller.goToNextLevel
-                      : null,
+                  onPressed:
+                  controller.hasNextLevel ? controller.goToNextLevel : null,
                   child: const Text('Next Level'),
                 ),
               ],

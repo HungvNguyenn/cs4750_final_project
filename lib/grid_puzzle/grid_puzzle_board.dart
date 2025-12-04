@@ -16,8 +16,7 @@ class GridPuzzleBoard extends StatelessWidget {
   Widget build(BuildContext context) {
     final grid = controller.grid;
     final rows = grid.length;
-    final cols =
-        grid.isEmpty ? 0 : grid[0].length; // all levels use equal-length rows
+    final cols = grid.isEmpty ? 0 : grid[0].length;
 
     const double cellSize = 80.0;
     const double spacing = 6.0;
@@ -32,7 +31,7 @@ class GridPuzzleBoard extends StatelessWidget {
               final value = grid[row][col];
 
               if (value == null) {
-                // Invisible, non-interactive cell with same footprint
+                // Invisible spacer to keep board shape
                 return SizedBox(
                   width: cellSize + spacing,
                   height: cellSize + spacing,
@@ -42,6 +41,7 @@ class GridPuzzleBoard extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.all(spacing / 2),
                 child: GestureDetector(
+                  // tap handling happens in grid_puzzle_page.dart
                   onTap: () => onCellTap(row, col),
                   child: Container(
                     width: cellSize,

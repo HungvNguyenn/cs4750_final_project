@@ -5,6 +5,7 @@ import 'package:puzzle_game/word_search/word_search_generator.dart';
 import 'package:puzzle_game/word_search/word_search_controller.dart';
 import 'package:puzzle_game/pages/congratulation_page.dart';
 import 'package:puzzle_game/rules_dialog.dart';
+import '../services/sfx.dart';
 
 //Main word search page
 class WordSearchPage extends StatefulWidget {
