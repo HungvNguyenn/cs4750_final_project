@@ -15,4 +15,5 @@ class Sfx {
   static Future<void> click()   => _play('sounds/click.wav');
   static Future<void> correct() => _play('sounds/correct.wav');
   static Future<void> reset()   => _play('sounds/reset.mp3');
+  static Future<void> wrong() => _play('sounds/wrong.mp3');
 }

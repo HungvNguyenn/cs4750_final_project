@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'match3_controller.dart';
 import 'match3_board.dart';
 import 'package:puzzle_game/rules_dialog.dart';
+import '../services/sfx.dart';
 
 class Match3Page extends StatefulWidget {
   const Match3Page({super.key});
@@ -13,15 +14,24 @@ class Match3Page extends StatefulWidget {
 
 class _Match3PageState extends State<Match3Page> {
   late Match3Controller controller;
+  int lastScore = 0; // track score for match detection
 
   @override
   void initState() {
     super.initState();
     controller = Match3Controller();
+
+    // Track when controller updates
     controller.addListener(_onControllerChanged);
   }
 
   void _onControllerChanged() {
+    //  If score increased → a match happened → play click sound
+    if (controller.score > lastScore) {
+      Sfx.click();
+      lastScore = controller.score;
+    }
+
     setState(() {});
   }
 
@@ -36,6 +46,13 @@ class _Match3PageState extends State<Match3Page> {
     controller.selectGem(row, col);
   }
 
+  void _restartGame() {
+    Sfx.reset();       //  play reset sound
+    lastScore = 0;     // reset tracking
+    controller.resetGame();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +61,7 @@ class _Match3PageState extends State<Match3Page> {
         centerTitle: true,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 12), // space from right edge
+            padding: const EdgeInsets.only(right: 12),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -55,13 +72,13 @@ class _Match3PageState extends State<Match3Page> {
               ),
               onPressed: () {
                 RuleDialog.show(
-                    context,
-                    title: "How to Play",
-                    rules:
-                    "• Match 3 or more gems of the same color to .\n"
-                    "• Swap any two adjacent gems by selecting a gem and then an adjacent gem.\n"
-                    "• Each gem removed gives 10 points"
-                    "• Score as high as possible and have fun"
+                  context,
+                  title: "How to Play",
+                  rules:
+                  "• Match 3 or more gems of the same color.\n"
+                      "• Swap two adjacent gems.\n"
+                      "• Each gem removed gives 10 points.\n"
+                      "• Score as high as possible and have fun!\n",
                 );
               },
               child: const Text(
@@ -75,6 +92,7 @@ class _Match3PageState extends State<Match3Page> {
           ),
         ],
       ),
+
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -133,11 +151,7 @@ class _Match3PageState extends State<Match3Page> {
 
               // Reset button
               ElevatedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    controller.resetGame();
-                  });
-                },
+                onPressed: _restartGame,
                 icon: const Icon(Icons.refresh),
                 label: const Text('New Game'),
                 style: ElevatedButton.styleFrom(

@@ -21,3 +21,4 @@ flutter:
     - assets/sounds/click.wav
     - assets/sounds/correct.wav
     - assets/sounds/reset.mp3
+    - assets/sounds/wrong.mp3

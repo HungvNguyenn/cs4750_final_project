@@ -20,8 +20,8 @@ class _WordSearchPageState extends State<WordSearchPage> {
   List<String> words = [];
   WordSearchController? controller;
 
-   int gridSize = 15; //the grid size of our word search
-  double cellSize = 20;   //the size of each cell in the grid
+  int gridSize = 15; //the grid size of our word search
+  double cellSize = 20; //the size of each cell in the grid
 
   @override
   void initState() {
@@ -72,11 +72,23 @@ class _WordSearchPageState extends State<WordSearchPage> {
   //handle what happens at the end of the drag
   void _endDrag() {
     setState(() {
+      // track how many words were found before this drag
+      final beforeFoundCount = controller!.foundWords.length;
+
       // Check if the selection matches any word
       controller!.checkSelection(controller!.currentSelection);
+
+      // if foundWords grew, a new word was found → play click sound
+      final afterFoundCount = controller!.foundWords.length;
+      if (afterFoundCount > beforeFoundCount) {
+        Sfx.click(); //  play "correct word" click sound
+      }
+
       controller!.currentSelection.clear();
 
+      // If all words are found, play success sound and show win page
       if (controller!.isCompleted()) {
+        Sfx.correct(); //  puzzle complete sound
         _showWin();
       }
     });
@@ -97,8 +109,6 @@ class _WordSearchPageState extends State<WordSearchPage> {
       ),
     );
   }
-
-
 
   //Determine the color of cell, depending if a word is found, or if it currently being selecetd
   Color _getCellColor(Point<int> point) {
@@ -122,14 +132,16 @@ class _WordSearchPageState extends State<WordSearchPage> {
         title: const Text("Word Search"),
         centerTitle: true,
         leading: IconButton(
-            icon: Icon(Icons.arrow_back_rounded, color: Colors.blue, size: 28),
+          icon: const Icon(Icons.arrow_back_rounded,
+              color: Colors.blue, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
 
         //Dialog button
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 12), // space from right edge
+            padding:
+            const EdgeInsets.only(right: 12), // space from right edge
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -142,11 +154,10 @@ class _WordSearchPageState extends State<WordSearchPage> {
                 RuleDialog.show(
                   context,
                   title: "How to Play",
-                  rules:
-                  "• Find the hidden words in the grid.\n"
-                  "• Drag across letters to select a word.\n"
-                  "• Correct words will turn Green.\n"
-                  "• Find all words to win the game.\n"
+                  rules: "• Find the hidden words in the grid.\n"
+                      "• Drag across letters to select a word.\n"
+                      "• Correct words will turn Green.\n"
+                      "• Find all words to win the game.\n",
                 );
               },
               child: const Text(
@@ -160,7 +171,6 @@ class _WordSearchPageState extends State<WordSearchPage> {
           ),
         ],
       ),
-
       body: grid.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
@@ -174,15 +184,19 @@ class _WordSearchPageState extends State<WordSearchPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                    onPressed: _newGame,
-                    child: const Text("New Game")),
-
+                  onPressed: () {
+                    Sfx.reset(); //  reset sound when starting a new game
+                    _newGame();
+                  },
+                  child: const Text("New Game"),
+                ),
                 const SizedBox(height: 100, width: 50),
 
                 // grid size dropdown
                 Container(
                   height: 36,
-                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15, vertical: 8),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade400),
                     borderRadius: BorderRadius.circular(8),
@@ -191,8 +205,9 @@ class _WordSearchPageState extends State<WordSearchPage> {
                     value: gridSize,
                     icon: const SizedBox.shrink(),
                     underline: const SizedBox(),
-                    style: const TextStyle(color: Colors.black, fontSize: 14),
-                    items:  const[
+                    style: const TextStyle(
+                        color: Colors.black, fontSize: 14),
+                    items: const [
                       DropdownMenuItem(value: 5, child: Text("5x5")),
                       DropdownMenuItem(value: 10, child: Text("10x10")),
                       DropdownMenuItem(value: 15, child: Text("15x15")),
@@ -213,15 +228,18 @@ class _WordSearchPageState extends State<WordSearchPage> {
             // Grid with drag selection
             Center(
               child: GestureDetector(
-                onPanStart: (details) => _startDrag(details.localPosition),
-                onPanUpdate: (details) => _updateDrag(details.localPosition),
+                onPanStart: (details) =>
+                    _startDrag(details.localPosition),
+                onPanUpdate: (details) =>
+                    _updateDrag(details.localPosition),
                 onPanEnd: (details) => _endDrag(),
                 child: SizedBox(
                   width: gridWidth,
                   height: gridHeight,
                   child: GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                    SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: gridSize,
                     ),
                     itemCount: gridSize * gridSize,
@@ -233,7 +251,8 @@ class _WordSearchPageState extends State<WordSearchPage> {
 
                       return Container(
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade700),
+                          border:
+                          Border.all(color: Colors.grey.shade700),
                           color: _getCellColor(point),
                         ),
                         child: Center(
@@ -242,7 +261,8 @@ class _WordSearchPageState extends State<WordSearchPage> {
                             style: TextStyle(
                               fontSize: cellSize * 0.5,
                               fontWeight: FontWeight.bold,
-                              color: controller!.foundCells.contains(point)
+                              color: controller!.foundCells
+                                  .contains(point)
                                   ? Colors.white
                                   : Colors.black,
                             ),
@@ -259,7 +279,8 @@ class _WordSearchPageState extends State<WordSearchPage> {
 
             // Word list
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 8.0),
               child: Wrap(
                 spacing: 12,
                 runSpacing: 6,
@@ -270,14 +291,16 @@ class _WordSearchPageState extends State<WordSearchPage> {
                     label: Text(
                       w,
                       style: TextStyle(
-                        color: found ? Colors.green : Colors.black,
+                        color:
+                        found ? Colors.green : Colors.black,
                         fontWeight: found
                             ? FontWeight.bold
                             : FontWeight.normal,
                       ),
                     ),
-                    backgroundColor:
-                    found ? Colors.green.shade100 : Colors.grey.shade200,
+                    backgroundColor: found
+                        ? Colors.green.shade100
+                        : Colors.grey.shade200,
                   );
                 }).toList(),
               ),
