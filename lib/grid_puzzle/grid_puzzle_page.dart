@@ -81,7 +81,8 @@ class _GridPuzzlePageState extends State<GridPuzzlePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Number Puzzle'),
+        title: const Text('Grid Puzzle'),
+        centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12), // space from right edge

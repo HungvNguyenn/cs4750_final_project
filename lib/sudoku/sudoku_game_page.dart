@@ -59,6 +59,7 @@ class _SudokuGamePageState extends State<SudokuGamePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Sudoku"),
+        centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12), // space from right edge
@@ -70,6 +71,7 @@ class _SudokuGamePageState extends State<SudokuGamePage> {
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
               ),
+              //Dialog button
               onPressed: () {
                 RuleDialog.show(
                     context,
@@ -96,6 +98,7 @@ class _SudokuGamePageState extends State<SudokuGamePage> {
       ),
       body: Column(
         children: [
+          const SizedBox(height: 100),
           //rows of buttons
           Padding(
               padding: const EdgeInsets.only(bottom: 20),

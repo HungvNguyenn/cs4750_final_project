@@ -4,7 +4,6 @@ import 'package:puzzle_game/sudoku/sudoku_game_page.dart';
 import 'package:puzzle_game/word_search/word_search_page.dart';
 import 'package:puzzle_game/grid_puzzle/grid_puzzle_page.dart';
 
-
 class MainMenuPage extends StatelessWidget {
   const MainMenuPage({super.key});
 
