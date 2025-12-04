@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'match3_controller.dart';
 import 'match3_board.dart';
+import 'package:puzzle_game/rules_dialog.dart';
 
 class Match3Page extends StatefulWidget {
   const Match3Page({super.key});
@@ -41,6 +42,38 @@ class _Match3PageState extends State<Match3Page> {
       appBar: AppBar(
         title: const Text('Match 3'),
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12), // space from right edge
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                RuleDialog.show(
+                    context,
+                    title: "How to Play",
+                    rules:
+                    "• Match 3 or more gems of the same color to .\n"
+                    "• Swap any two adjacent gems by selecting a gem and then an adjacent gem.\n"
+                    "• Each gem removed gives 10 points"
+                    "• Score as high as possible and have fun"
+                );
+              },
+              child: const Text(
+                "Rules",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Center(
         child: SingleChildScrollView(

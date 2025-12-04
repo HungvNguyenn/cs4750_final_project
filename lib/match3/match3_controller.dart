@@ -27,6 +27,8 @@ class Match3Controller extends ChangeNotifier {
   int? selectedRow;
   int? selectedCol;
 
+  bool _isInitializing = false;
+
   final Random _random = Random();
 
   Match3Controller() {
@@ -34,6 +36,9 @@ class Match3Controller extends ChangeNotifier {
   }
 
   void _initializeGrid() {
+    _isInitializing = true;
+    score = 0;
+
     grid = List.generate(
       rows,
           (row) => List.generate(
@@ -49,6 +54,7 @@ class Match3Controller extends ChangeNotifier {
       _fillEmptySpaces();
     }
 
+    _isInitializing = false;
     notifyListeners();
   }
 
@@ -198,7 +204,9 @@ class Match3Controller extends ChangeNotifier {
       }
     }
 
-    score += gemsRemoved * 10;
+    if (!_isInitializing) {
+      score += gemsRemoved * 10;
+    }
     notifyListeners();
   }
 
@@ -232,7 +240,6 @@ class Match3Controller extends ChangeNotifier {
   }
 
   void resetGame() {
-    score = 0;
     selectedRow = null;
     selectedCol = null;
     _initializeGrid();

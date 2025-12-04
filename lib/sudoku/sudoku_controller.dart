@@ -186,4 +186,13 @@ class SudokuController extends ChangeNotifier {
     }
     return true;
   }
+
+  // clear only the currently selected cell
+  void clearSelectedCell() {
+    if (selectedRow != null && selectedCol != null && !fixed[selectedRow!][selectedCol!]) {
+      board[selectedRow!][selectedCol!] = 0;
+      notifyListeners();
+    }
+  }
+
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:puzzle_game/pages/congratulation_page.dart';
 import 'dart:math';
 import 'package:puzzle_game/word_search/word_search_generator.dart';
 import 'package:puzzle_game/word_search/word_search_controller.dart';
+import 'package:puzzle_game/pages/congratulation_page.dart';
+import 'package:puzzle_game/rules_dialog.dart';
 
 //Main word search page
 class WordSearchPage extends StatefulWidget {
@@ -119,11 +120,45 @@ class _WordSearchPageState extends State<WordSearchPage> {
       appBar: AppBar(
         title: const Text("Word Search"),
         leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.blue, size: 28,),
-          onPressed: () {
-              Navigator.pop(context);
-          },
+            icon: Icon(Icons.arrow_back_rounded, color: Colors.blue, size: 28),
+          onPressed: () => Navigator.pop(context),
         ),
+
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12), // space from right edge
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                RuleDialog.show(
+                  context,
+                  title: "How to Play",
+                  rules:
+                  "• Find the hidden words in the grid.\n"
+                  "• Drag across letters to select a word.\n"
+                  "• Correct words will turn Green.\n"
+                  "• Find all words to win the game.\n"
+                );
+              },
+              child: const Text(
+                "Rules",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+
+
+
       ),
       body: grid.isEmpty
           ? const Center(child: CircularProgressIndicator())
