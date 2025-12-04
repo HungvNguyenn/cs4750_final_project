@@ -9,10 +9,10 @@ class SudokuController extends ChangeNotifier {
   int? selectedCol;
 
   SudokuController() {
-    generatePuzzle();
+    generateSudoku();
   }
 
-//TODO: comments
+//select a cell in the sudoku board
   void selectCell(int row, int col) {
     if (fixed[row][col]) return; // cannot select fixed cells
     selectedRow = row;
@@ -20,7 +20,7 @@ class SudokuController extends ChangeNotifier {
     notifyListeners();
   }
 
-//TODO: comments
+//Add a number to the selected cell
   void enterNumber(int number) {
     if (selectedRow == null || selectedCol == null) return;
 
@@ -33,7 +33,7 @@ class SudokuController extends ChangeNotifier {
     notifyListeners();
   }
 
-//TODO: comments
+//check the rows, column and 3x3 grid to see if the number in the the cell violate the rules
   bool mistakeAt(int row, int col) {
     int value = board[row][col];
     if (value == 0) return false;
@@ -61,8 +61,8 @@ class SudokuController extends ChangeNotifier {
     return false;
   }
 
-//TODO: comments
-  void generatePuzzle() {
+//genereate the sudoku puzzle
+  void generateSudoku() {
     board = List.generate(9, (_) => List.filled(9, 0));
     fixed = List.generate(9, (_) => List.filled(9, false));
 
@@ -169,7 +169,7 @@ class SudokuController extends ChangeNotifier {
 
   //new game
   void newGame() {
-    generatePuzzle();
+    generateSudoku();
     selectedRow = null;
     selectedCol = null;
     notifyListeners();
@@ -186,4 +186,13 @@ class SudokuController extends ChangeNotifier {
     }
     return true;
   }
+
+  // clear only the currently selected cell
+  void clearSelectedCell() {
+    if (selectedRow != null && selectedCol != null && !fixed[selectedRow!][selectedCol!]) {
+      board[selectedRow!][selectedCol!] = 0;
+      notifyListeners();
+    }
+  }
+
 }

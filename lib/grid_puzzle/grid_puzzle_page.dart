@@ -1,9 +1,11 @@
 // lib/grid_puzzle/grid_puzzle_page.dart
 import 'package:flutter/material.dart';
 import 'package:puzzle_game/pages/congratulation_page.dart';
+import 'package:puzzle_game/rules_dialog.dart';
 import 'grid_puzzle_board.dart';
 import 'grid_puzzle_controller.dart';
 import '../services/sfx.dart';
+
 
 
 class GridPuzzlePage extends StatefulWidget {
@@ -95,7 +97,40 @@ class _GridPuzzlePageState extends State<GridPuzzlePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Number Puzzle'),
+        title: const Text('Grid Puzzle'),
+        centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12), // space from right edge
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                RuleDialog.show(
+                    context,
+                    title: "How to Play",
+                    rules:
+                    "• When you click on a square, the value in that square is added to all adjacent squares. \n"
+                    "• The clicked sqaure becomes 0\n"
+                    "• The goal is to make the whole grid 0\n"
+                    "• Good Luck!\n"
+                );
+              },
+              child: const Text(
+                "Rules",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Center(
         child: Column(

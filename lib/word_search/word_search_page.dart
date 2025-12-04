@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:puzzle_game/pages/congratulation_page.dart';
 import 'dart:math';
 import 'package:puzzle_game/word_search/word_search_generator.dart';
 import 'package:puzzle_game/word_search/word_search_controller.dart';
+import 'package:puzzle_game/pages/congratulation_page.dart';
+import 'package:puzzle_game/rules_dialog.dart';
 import '../services/sfx.dart';
 
 //Main word search page
@@ -19,7 +20,7 @@ class _WordSearchPageState extends State<WordSearchPage> {
   List<String> words = [];
   WordSearchController? controller;
 
-  final int gridSize = 15; //the grid size of our word search
+   int gridSize = 15; //the grid size of our word search
   double cellSize = 20;   //the size of each cell in the grid
 
   @override
@@ -39,13 +40,13 @@ class _WordSearchPageState extends State<WordSearchPage> {
   //Generate a new Game
   void _newGame() {
     var generator = WordSearchGenerator();
-    var selectedWords = (words..shuffle()).take(10).toList();
+    var shuffleWords = List<String>.from(words)..shuffle();
+    var selectedWords = shuffleWords.take(10).toList();
     var result = generator.generate(selectedWords, gridSize);
 
     setState(() {
       grid = result.grid;
-      words = result.placedWords;
-      controller = WordSearchController(grid, words);
+      controller = WordSearchController(grid, result.placedWords);
     });
   }
 
@@ -112,20 +113,54 @@ class _WordSearchPageState extends State<WordSearchPage> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double gridWidth = screenWidth * 0.4;
+    double gridWidth = screenWidth * 0.35;
     cellSize = gridWidth / gridSize;
     double gridHeight = cellSize * gridSize;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Word Search"),
+        centerTitle: true,
         leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.blue, size: 28,),
-          onPressed: () {
-              Navigator.pop(context);
-          },
+            icon: Icon(Icons.arrow_back_rounded, color: Colors.blue, size: 28),
+          onPressed: () => Navigator.pop(context),
         ),
+
+        //Dialog button
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12), // space from right edge
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                RuleDialog.show(
+                  context,
+                  title: "How to Play",
+                  rules:
+                  "• Find the hidden words in the grid.\n"
+                  "• Drag across letters to select a word.\n"
+                  "• Correct words will turn Green.\n"
+                  "• Find all words to win the game.\n"
+                );
+              },
+              child: const Text(
+                "Rules",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
+
       body: grid.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
@@ -134,12 +169,46 @@ class _WordSearchPageState extends State<WordSearchPage> {
           children: [
             const SizedBox(height: 10),
 
-            // New Game button
-            ElevatedButton(
-              onPressed: _newGame,
-              child: const Text("New Game"),
+            //rows for New game and grid size changes
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    onPressed: _newGame,
+                    child: const Text("New Game")),
+
+                const SizedBox(height: 100, width: 50),
+
+                // grid size dropdown
+                Container(
+                  height: 36,
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade400),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: DropdownButton(
+                    value: gridSize,
+                    icon: const SizedBox.shrink(),
+                    underline: const SizedBox(),
+                    style: const TextStyle(color: Colors.black, fontSize: 14),
+                    items:  const[
+                      DropdownMenuItem(value: 5, child: Text("5x5")),
+                      DropdownMenuItem(value: 10, child: Text("10x10")),
+                      DropdownMenuItem(value: 15, child: Text("15x15")),
+                      DropdownMenuItem(value: 20, child: Text("20x20")),
+                    ],
+                    onChanged: (newSize) {
+                      setState(() {
+                        gridSize = newSize!;
+                        _newGame();
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+              ],
             ),
-            const SizedBox(height: 10),
 
             // Grid with drag selection
             Center(
@@ -195,7 +264,7 @@ class _WordSearchPageState extends State<WordSearchPage> {
                 spacing: 12,
                 runSpacing: 6,
                 alignment: WrapAlignment.center,
-                children: words.map((w) {
+                children: controller!.words.map((w) {
                   bool found = controller!.foundWords.contains(w);
                   return Chip(
                     label: Text(

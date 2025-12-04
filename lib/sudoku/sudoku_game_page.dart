@@ -3,6 +3,7 @@ import 'package:puzzle_game/pages/congratulation_page.dart';
 import 'package:puzzle_game/sudoku/sudoku_number_pad.dart';
 import 'package:puzzle_game/sudoku/sudoku_board.dart';
 import 'package:puzzle_game/sudoku/sudoku_controller.dart';
+import 'package:puzzle_game/rules_dialog.dart';
 
 class SudokuGamePage extends StatefulWidget {
   const SudokuGamePage({super.key});
@@ -56,9 +57,48 @@ class _SudokuGamePageState extends State<SudokuGamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Sudoku")),
+      appBar: AppBar(
+        title: const Text("Sudoku"),
+        centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12), // space from right edge
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              //Dialog button
+              onPressed: () {
+                RuleDialog.show(
+                    context,
+                    title: "How to Play",
+                    rules:
+                        "• Fill the sudoku grid so that every row,column and 3x3 grid contains the number 1-9\n"
+                        "• To fill a cell tap the cell and then a number on the number pad.\n"
+                        "• The cell will turn red if there is already a number in the row, column or 3x3 grid.\n"
+                        "• Use clear Board to clear the whole board.\n"
+                        "• Use New Game to generate a new Game\n"
+                        "• Use clear next on the number pad will clear the current cell\n"
+                );
+              },
+              child: const Text(
+                "Rules",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
+          const SizedBox(height: 100),
           //rows of buttons
           Padding(
               padding: const EdgeInsets.only(bottom: 20),
