@@ -56,10 +56,10 @@ class _SudokuGamePageState extends State<SudokuGamePage> {
     }
 
     if (isWrong) {
-      //  invalid move
+      // invalid move
       Sfx.wrong();
     } else {
-      //  valid move
+      // valid move
       Sfx.click();
     }
 
@@ -80,7 +80,7 @@ class _SudokuGamePageState extends State<SudokuGamePage> {
   }
 
   void _clearBoard() {
-    //  reset sound when clearing the board
+    // reset sound when clearing the board
     Sfx.reset();
     setState(() {
       controller.clearBoard();
@@ -88,7 +88,7 @@ class _SudokuGamePageState extends State<SudokuGamePage> {
   }
 
   void _newGame() {
-    //  reset sound when starting a new game
+    // reset sound when starting a new game
     Sfx.reset();
     setState(() {
       controller.newGame();
@@ -99,8 +99,30 @@ class _SudokuGamePageState extends State<SudokuGamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Sudoku"),
         centerTitle: true,
+        title: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Sudoku",
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w800,
+                color: Colors.deepPurple,
+                letterSpacing: 1.1,
+              ),
+            ),
+            SizedBox(height: 2),
+            Text(
+              "Fill every row, column & box",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12), // space from right edge
@@ -109,7 +131,7 @@ class _SudokuGamePageState extends State<SudokuGamePage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6),
                 ),
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.deepPurple,
                 foregroundColor: Colors.white,
               ),
               // Dialog button

@@ -26,7 +26,7 @@ class _Match3PageState extends State<Match3Page> {
   }
 
   void _onControllerChanged() {
-    //  If score increased → a match happened → play click sound
+    // If score increased → a match happened → play click sound
     if (controller.score > lastScore) {
       Sfx.click();
       lastScore = controller.score;
@@ -47,7 +47,7 @@ class _Match3PageState extends State<Match3Page> {
   }
 
   void _restartGame() {
-    Sfx.reset();       //  play reset sound
+    Sfx.reset();       // play reset sound
     lastScore = 0;     // reset tracking
     controller.resetGame();
     setState(() {});
@@ -57,8 +57,30 @@ class _Match3PageState extends State<Match3Page> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Match 3'),
         centerTitle: true,
+        title: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Match 3',
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w800,
+                color: Colors.deepPurple,
+                letterSpacing: 1.1,
+              ),
+            ),
+            SizedBox(height: 2),
+            Text(
+              'Match gems to score points',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
@@ -67,7 +89,7 @@ class _Match3PageState extends State<Match3Page> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6),
                 ),
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.deepPurple,
                 foregroundColor: Colors.white,
               ),
               onPressed: () {

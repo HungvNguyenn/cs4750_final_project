@@ -6,8 +6,6 @@ import 'grid_puzzle_board.dart';
 import 'grid_puzzle_controller.dart';
 import '../services/sfx.dart';
 
-
-
 class GridPuzzlePage extends StatefulWidget {
   const GridPuzzlePage({super.key});
 
@@ -38,14 +36,14 @@ class _GridPuzzlePageState extends State<GridPuzzlePage> {
   }
 
   void _handleCellTap(int row, int col) {
-    // 🔊 play click sound on every tap
+    // play click sound on every tap
     Sfx.click();
 
     controller.tapCell(row, col);
 
     if (!controller.isSolved) return;
 
-    // 🔊 play correct sound when the puzzle is solved
+    // play correct sound when the puzzle is solved
     Sfx.correct();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -97,8 +95,30 @@ class _GridPuzzlePageState extends State<GridPuzzlePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Grid Puzzle'),
         centerTitle: true,
+        title: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Grid Puzzle',
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.1,
+                color: Colors.deepPurple,
+              ),
+            ),
+            SizedBox(height: 2),
+            Text(
+              'Make every tile 0',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12), // space from right edge
@@ -112,13 +132,13 @@ class _GridPuzzlePageState extends State<GridPuzzlePage> {
               ),
               onPressed: () {
                 RuleDialog.show(
-                    context,
-                    title: "How to Play",
-                    rules:
-                    "• When you click on a square, the value in that square is added to all adjacent squares. \n"
-                    "• The clicked sqaure becomes 0\n"
-                    "• The goal is to make the whole grid 0\n"
-                    "• Good Luck!\n"
+                  context,
+                  title: "How to Play",
+                  rules:
+                  "• When you click on a square, the value in that square is added to all adjacent squares.\n"
+                      "• The clicked square becomes 0.\n"
+                      "• The goal is to make the whole grid 0.\n"
+                      "• Good luck!\n",
                 );
               },
               child: const Text(

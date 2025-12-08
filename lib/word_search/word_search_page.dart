@@ -7,7 +7,7 @@ import 'package:puzzle_game/pages/congratulation_page.dart';
 import 'package:puzzle_game/rules_dialog.dart';
 import '../services/sfx.dart';
 
-//Main word search page
+// Main word search page
 class WordSearchPage extends StatefulWidget {
   const WordSearchPage({super.key});
 
@@ -20,16 +20,16 @@ class _WordSearchPageState extends State<WordSearchPage> {
   List<String> words = [];
   WordSearchController? controller;
 
-  int gridSize = 15; //the grid size of our word search
-  double cellSize = 20; //the size of each cell in the grid
+  int gridSize = 15; // grid size
+  double cellSize = 20; // pixel size of each cell
 
   @override
   void initState() {
     super.initState();
-    _loadWords(); //load word from assets when the page is initialized
+    _loadWords();
   }
 
-  //load word from asset file
+  // Load words from asset file
   Future<void> _loadWords() async {
     String file = await rootBundle.loadString("assets/words.txt");
     List<String> list = file.split('\n').map((e) => e.trim()).toList();
@@ -37,7 +37,7 @@ class _WordSearchPageState extends State<WordSearchPage> {
     _newGame();
   }
 
-  //Generate a new Game
+  // Generate a new game
   void _newGame() {
     var generator = WordSearchGenerator();
     var shuffleWords = List<String>.from(words)..shuffle();
@@ -50,12 +50,12 @@ class _WordSearchPageState extends State<WordSearchPage> {
     });
   }
 
-  // Handle start of a drag state
+  // Start drag
   void _startDrag(Offset localPosition) {
     _updateDrag(localPosition);
   }
 
-  //handle how the dragging is over the grid
+  // Drag over grid
   void _updateDrag(Offset localPosition) {
     int row = (localPosition.dy ~/ cellSize).clamp(0, gridSize - 1);
     int col = (localPosition.dx ~/ cellSize).clamp(0, gridSize - 1);
@@ -69,53 +69,51 @@ class _WordSearchPageState extends State<WordSearchPage> {
     }
   }
 
-  //handle what happens at the end of the drag
+  // End drag → check for word match
   void _endDrag() {
     setState(() {
-      // track how many words were found before this drag
-      final beforeFoundCount = controller!.foundWords.length;
+      final before = controller!.foundWords.length;
 
-      // Check if the selection matches any word
       controller!.checkSelection(controller!.currentSelection);
-
-      // if foundWords grew, a new word was found → play click sound
-      final afterFoundCount = controller!.foundWords.length;
-      if (afterFoundCount > beforeFoundCount) {
-        Sfx.click(); //  play "correct word" click sound
-      }
-
       controller!.currentSelection.clear();
 
-      // If all words are found, play success sound and show win page
+      final after = controller!.foundWords.length;
+
+      // If a new word was found → click sound
+      if (after > before) {
+        Sfx.click();
+      }
+
+      // If all words found → success sound + win screen
       if (controller!.isCompleted()) {
-        Sfx.correct(); //  puzzle complete sound
+        Sfx.correct();
         _showWin();
       }
     });
   }
 
-  //navigate to the win page if the win condition is set (when all words are found)
+  // Win dialog
   void _showWin() {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => CongratulationPage(
-          message: "Congratulation you found all the words!",
+          message: "Congratulations! You found all the words!",
           onNext: () {
-            Navigator.pop(context); // close the congratulation page
-            _newGame(); // start a new game
+            Navigator.pop(context);
+            _newGame();
           },
         ),
       ),
     );
   }
 
-  //Determine the color of cell, depending if a word is found, or if it currently being selecetd
+  // Cell color logic
   Color _getCellColor(Point<int> point) {
     if (controller!.foundCells.contains(point)) {
-      return Colors.green.shade300; // Found word stays green
+      return Colors.green.shade300;
     } else if (controller!.currentSelection.contains(point)) {
-      return Colors.yellow.shade300; // Currently dragging
+      return Colors.yellow.shade300;
     }
     return Colors.white;
   }
@@ -129,34 +127,54 @@ class _WordSearchPageState extends State<WordSearchPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Word Search"),
         centerTitle: true,
+        title: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Word Search",
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w800,
+                color: Colors.deepPurple,
+                letterSpacing: 1.1,
+              ),
+            ),
+            SizedBox(height: 2),
+            Text(
+              "Find all hidden words",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded,
-              color: Colors.blue, size: 28),
+              color: Colors.deepPurple, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
-
-        //Dialog button
         actions: [
           Padding(
-            padding:
-            const EdgeInsets.only(right: 12), // space from right edge
+            padding: const EdgeInsets.only(right: 12),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6),
                 ),
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.deepPurple,
                 foregroundColor: Colors.white,
               ),
               onPressed: () {
                 RuleDialog.show(
                   context,
                   title: "How to Play",
-                  rules: "• Find the hidden words in the grid.\n"
+                  rules:
+                  "• Find the hidden words in the grid.\n"
                       "• Drag across letters to select a word.\n"
-                      "• Correct words will turn Green.\n"
+                      "• Correct words turn green.\n"
                       "• Find all words to win the game.\n",
                 );
               },
@@ -171,34 +189,34 @@ class _WordSearchPageState extends State<WordSearchPage> {
           ),
         ],
       ),
+
       body: grid.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
 
-            //rows for New game and grid size changes
+            // New game + grid size row
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Sfx.reset(); //  reset sound when starting a new game
+                    Sfx.reset();
                     _newGame();
                   },
                   child: const Text("New Game"),
                 ),
-                const SizedBox(height: 100, width: 50),
+                const SizedBox(width: 50),
 
-                // grid size dropdown
                 Container(
                   height: 36,
                   padding: const EdgeInsets.symmetric(
                       horizontal: 15, vertical: 8),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade400),
+                    border:
+                    Border.all(color: Colors.grey.shade400),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: DropdownButton(
@@ -221,11 +239,12 @@ class _WordSearchPageState extends State<WordSearchPage> {
                     },
                   ),
                 ),
-                const SizedBox(width: 10),
               ],
             ),
 
-            // Grid with drag selection
+            const SizedBox(height: 12),
+
+            // Word Search Grid
             Center(
               child: GestureDetector(
                 onPanStart: (details) =>
@@ -251,8 +270,8 @@ class _WordSearchPageState extends State<WordSearchPage> {
 
                       return Container(
                         decoration: BoxDecoration(
-                          border:
-                          Border.all(color: Colors.grey.shade700),
+                          border: Border.all(
+                              color: Colors.grey.shade700),
                           color: _getCellColor(point),
                         ),
                         child: Center(
@@ -277,10 +296,9 @@ class _WordSearchPageState extends State<WordSearchPage> {
 
             const SizedBox(height: 10),
 
-            // Word list
+            // Word list summary
             Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Wrap(
                 spacing: 12,
                 runSpacing: 6,
@@ -305,6 +323,7 @@ class _WordSearchPageState extends State<WordSearchPage> {
                 }).toList(),
               ),
             ),
+
             const SizedBox(height: 10),
           ],
         ),
